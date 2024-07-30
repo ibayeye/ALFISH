@@ -9,13 +9,14 @@ class LandingPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Color(0xFFEE8E8E8),
       body: SafeArea(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Flexible(
-              child: Padding(
-                padding: EdgeInsets.only(left: 24),
+              child: Container(
+                margin: EdgeInsets.only(left: 24, top: 50),
                 child: RichText(
                   text: TextSpan(
                     style: GoogleFonts.poppins(
@@ -32,13 +33,13 @@ class LandingPage extends StatelessWidget {
                 ),
               ),
             ),
-            Flexible(
-              child: Padding(
-                padding: EdgeInsets.only(left: 24, top: 14),
+            Container(
+              child: Container(
+                margin: EdgeInsets.only(left: 24, top: 30),
                 child: RichText(
                   text: TextSpan(
                     style: GoogleFonts.poppins(
-                      fontSize: 14,
+                      fontSize: 18,
                       color: Colors.black,
                     ),
                     children: [
@@ -50,8 +51,9 @@ class LandingPage extends StatelessWidget {
               ),
             ),
             Center(
+              child: Container(
+                margin: EdgeInsets.only(top: 60,),
               child: Padding(
-                padding: EdgeInsets.only(top: 120),
                 child: Image(
                   image: AssetImage('assets/images/landing.png'),
                   height: 260,
@@ -59,8 +61,9 @@ class LandingPage extends StatelessWidget {
               ),
             ),
             Center(
+              child: Container(
+                margin: EdgeInsets.only(top: 40),
               child: Padding(
-                padding: EdgeInsets.only(top: 100),
                 child: ElevatedButton(
                   onPressed: () {},
                   style: ElevatedButton.styleFrom(
