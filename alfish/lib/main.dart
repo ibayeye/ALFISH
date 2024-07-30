@@ -1,4 +1,6 @@
+import 'package:alfish/core.dart';
 import 'package:alfish/landingpage.dart';
+import 'package:alfish/login.dart';
 import 'package:flutter/material.dart';
 
 void main() {
@@ -11,7 +13,7 @@ class MainApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: LandingPage(),
+      home: loginPage(),
     );
   }
 }
