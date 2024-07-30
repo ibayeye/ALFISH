@@ -53,6 +53,7 @@ class LandingPage extends StatelessWidget {
             Center(
               child: Container(
                 margin: EdgeInsets.only(top: 60,),
+              child: Padding(
                 child: Image(
                   image: AssetImage('assets/images/landing.png'),
                   height: 260,
@@ -62,6 +63,7 @@ class LandingPage extends StatelessWidget {
             Center(
               child: Container(
                 margin: EdgeInsets.only(top: 40),
+              child: Padding(
                 child: ElevatedButton(
                   onPressed: () {},
                   style: ElevatedButton.styleFrom(
