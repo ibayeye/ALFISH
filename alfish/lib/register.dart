@@ -257,6 +257,28 @@ class _RegisterPageState extends State<RegisterPage> {
                     style: TextStyle(color: Colors.red, fontSize: 12),
                   ),
                 ),
+              SizedBox(height: 20),
+              Padding(
+                padding: const EdgeInsets.only(right: 20),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    Text("Already have account?"),
+                    TextButton(
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => LoginPage()),
+                        );
+                      },
+                      child: Text(
+                        'Login',
+                        style: TextStyle(color: Colors.blueAccent),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
               Container(
                 margin: EdgeInsets.only(left: 24, right: 24, top: 20),
                 width: double.infinity,
