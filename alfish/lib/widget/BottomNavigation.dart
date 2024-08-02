@@ -1,9 +1,9 @@
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:flutter_svg/svg.dart';
 
 class BottomNavigation extends StatelessWidget {
-  final Function(int)? onTap;
+  final Function(int)? onTap; // Mengambil parameter int untuk onTap
 
   const BottomNavigation({
     Key? key,
@@ -13,20 +13,20 @@ class BottomNavigation extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final List<Widget> navigationItems = [
-      const Icon(
-        Icons.file_open,
-        size: 30,
-        color: Colors.white,
+      SvgPicture.asset(
+        'assets/images/i_report.svg',
+        width: 30,
+        height: 30,
       ),
-      const Icon(
-        Icons.home,
-        size: 30,
-        color: Colors.white,
+      SvgPicture.asset(
+        'assets/images/i_home.svg',
+        width: 30,
+        height: 30,
       ),
-      const FaIcon(
-        FontAwesomeIcons.fishFins,
-        size: 30,
-        color: Colors.white,
+      SvgPicture.asset(
+        'assets/images/i_insert.svg',
+        width: 30,
+        height: 30,
       ),
     ];
 
@@ -36,7 +36,7 @@ class BottomNavigation extends StatelessWidget {
       items: navigationItems,
       backgroundColor: Colors.transparent,
       animationDuration: Duration(milliseconds: 300),
-      onTap: onTap,
+      onTap: onTap, // Menangani perubahan halaman saat item di-klik
     );
   }
 }
