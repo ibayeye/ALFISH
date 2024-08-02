@@ -7,7 +7,7 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "nodemon index.js"
   },
-  "author": "anisa",
+  "author": "iqbal",
   "license": "ISC",
   "dependencies": {
     "bcrypt": "^5.1.0",
