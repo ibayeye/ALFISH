@@ -1,31 +1,27 @@
-const express = require('express')
-const app = express()
-const mongoose = require('mongoose')
-const mongoUrl = 'mongodb://localhost:27017/tokogitar1'
-const cors = require('cors')
-const path = require('path')
 
-mongoose.connect(mongoUrl, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true
-}).then(() => {
-    console.log('Berhasil Connect Ke Database')
-}).catch((e) => {
-    console.log(e)
-    console.log('Gagal Connect Ke Database')
-})
+const express = require("express");
+const app = express();
+const router = require("./routes/index.js");
+const cors = require("cors");
+const dotenv = require("dotenv");
+const body_parser = require("body-parser");
+const db = require("./config/database.js");
+const userRoutes = require("./routes/userRoutes.js");
 
-app.use(express.json())
-app.use(express.urlencoded({ extended: true }))
-app.use(cors())
+const userModel = require("./models/user.js");
 
-const directory = path.join(__dirname, '/static/')
-app.use(express.static(directory))
+dotenv.config();
 
-app.use('/user', require('./routes/user'))
-app.use('/gitar', require('./routes/gitar'))
-app.use('/transaksi', require('./routes/transaksi'))
+app.use(cors());
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+app.use(body_parser.json());
+app.use('/', router);
+app.use('/', userRoutes);
 
-app.listen(5001, () => {
-    console.log('Berhasil Jalan')
-})
+
+const PORT = process.env.PORT;
+
+app.listen(PORT, () => {
+  console.log(`Server berlajan di http://localhost:${PORT}`);
+});

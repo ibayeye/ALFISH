@@ -1,48 +1,60 @@
 import 'dart:convert';
 
-import 'package:alfish/mainpage.dart';
-import 'package:alfish/register.dart';
+import 'package:alfish/core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:http/http.dart' as http;
+import 'package:alfish/login.dart';
 import 'config.dart';
 
-class LoginPage extends StatefulWidget {
-  const LoginPage({super.key});
+class RegisterPage extends StatefulWidget {
+  const RegisterPage({super.key});
 
   @override
-  State<LoginPage> createState() => _LoginPageState();
+  State<RegisterPage> createState() => _RegisterPageState();
 }
 
-class _LoginPageState extends State<LoginPage> {
+class _RegisterPageState extends State<RegisterPage> {
+  TextEditingController usernameController = TextEditingController();
   TextEditingController emailController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
+  TextEditingController confirmPasswordController = TextEditingController();
 
-  bool _obscureText = true; // Variabel untuk mengatur tampilan password
+  bool _obscureText1 = true;
+  bool _obscureText2 = true;
+  bool _isUsernameValid = true;
   bool _isEmailValid = true;
   bool _isPasswordValid = true;
-
+  bool _isConfirmPasswordValid = true;
   String? _errorMessage;
 
-  void loginUser() async {
+  void registerUser() async {
     setState(() {
       // Validasi input sebelum mengirim permintaan
+      _isUsernameValid = usernameController.text.isNotEmpty;
       _isEmailValid = emailController.text.isNotEmpty;
       _isPasswordValid = passwordController.text.isNotEmpty;
+      _isConfirmPasswordValid = confirmPasswordController.text.isNotEmpty &&
+          confirmPasswordController.text == passwordController.text;
     });
 
-    if (_isEmailValid && _isPasswordValid) {
+    if (_isUsernameValid &&
+        _isEmailValid &&
+        _isPasswordValid &&
+        _isConfirmPasswordValid) {
       // Lakukan registrasi
-      var reqBody = {
+      var regBody = {
+        'username': usernameController.text,
         'email': emailController.text,
         'password': passwordController.text,
+        'confirm_password': confirmPasswordController.text
       };
 
       try {
         var response = await http.post(
-          Uri.parse(login),
+          Uri.parse(registration),
           headers: {"Content-Type": "application/json"},
-          body: jsonEncode(reqBody),
+          body: jsonEncode(regBody),
         );
 
         if (response.statusCode == 200) {
@@ -52,12 +64,13 @@ class _LoginPageState extends State<LoginPage> {
             showDialog(
               context: context,
               builder: (context) => AlertDialog(
-                title: Text('Login Berhasil'),
+                title: Text('Pendaftaran Berhasil'),
+                content: Text('Akun berhasil dibuat!'),
                 actions: [
                   TextButton(
                     onPressed: () {
                       Navigator.of(context).pushReplacement(
-                        MaterialPageRoute(builder: (context) => MainPage()),
+                        MaterialPageRoute(builder: (context) => LoginPage()),
                       );
                     },
                     child: Text('OK'),
@@ -72,7 +85,7 @@ class _LoginPageState extends State<LoginPage> {
           }
         } else {
           setState(() {
-            _errorMessage = 'Email atau password salah';
+            _errorMessage = 'Gagal menghubungi server';
           });
         }
       } catch (e) {
@@ -96,10 +109,37 @@ class _LoginPageState extends State<LoginPage> {
                 padding: EdgeInsets.only(top: 100),
                 child: Center(
                   child: SvgPicture.asset(
-                    'assets/images/i_login.svg',
+                    'assets/images/i_register.svg',
                     width: 150,
                     height: 150,
                   ),
+                ),
+              ),
+              Container(
+                margin: EdgeInsets.symmetric(horizontal: 24),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    TextField(
+                      controller: usernameController,
+                      keyboardType: TextInputType.text,
+                      decoration: InputDecoration(
+                        prefixIcon: Icon(Icons.person),
+                        labelText: 'Username',
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(35),
+                        ),
+                      ),
+                    ),
+                    if (!_isUsernameValid)
+                      Padding(
+                        padding: const EdgeInsets.only(top: 8.0),
+                        child: Text(
+                          "Username harus diisi!",
+                          style: TextStyle(color: Colors.red, fontSize: 12),
+                        ),
+                      ),
+                  ],
                 ),
               ),
               Container(
@@ -137,7 +177,7 @@ class _LoginPageState extends State<LoginPage> {
                     TextField(
                       controller: passwordController,
                       keyboardType: TextInputType.text,
-                      obscureText: _obscureText,
+                      obscureText: _obscureText1,
                       decoration: InputDecoration(
                         prefixIcon: Icon(Icons.lock),
                         labelText: 'Password',
@@ -146,13 +186,13 @@ class _LoginPageState extends State<LoginPage> {
                         ),
                         suffixIcon: IconButton(
                           icon: Icon(
-                            _obscureText
+                            _obscureText1
                                 ? Icons.visibility
                                 : Icons.visibility_off,
                           ),
                           onPressed: () {
                             setState(() {
-                              _obscureText = !_obscureText;
+                              _obscureText1 = !_obscureText1;
                             });
                           },
                         ),
@@ -169,6 +209,46 @@ class _LoginPageState extends State<LoginPage> {
                   ],
                 ),
               ),
+              Container(
+                margin: EdgeInsets.only(left: 24, right: 24, top: 20),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    TextField(
+                      controller: confirmPasswordController,
+                      keyboardType: TextInputType.text,
+                      obscureText: _obscureText2,
+                      decoration: InputDecoration(
+                        prefixIcon: Icon(Icons.lock),
+                        labelText: 'Confirm Password',
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(35),
+                        ),
+                        suffixIcon: IconButton(
+                          icon: Icon(
+                            _obscureText2
+                                ? Icons.visibility
+                                : Icons.visibility_off,
+                          ),
+                          onPressed: () {
+                            setState(() {
+                              _obscureText2 = !_obscureText2;
+                            });
+                          },
+                        ),
+                      ),
+                    ),
+                    if (!_isConfirmPasswordValid)
+                      Padding(
+                        padding: const EdgeInsets.only(top: 8.0),
+                        child: Text(
+                          "Konfirmasi password tidak sesuai!",
+                          style: TextStyle(color: Colors.red, fontSize: 12),
+                        ),
+                      ),
+                  ],
+                ),
+              ),
               if (_errorMessage != null)
                 Padding(
                   padding: const EdgeInsets.only(top: 8.0),
@@ -177,66 +257,45 @@ class _LoginPageState extends State<LoginPage> {
                     style: TextStyle(color: Colors.red, fontSize: 12),
                   ),
                 ),
-              Container(
-                margin: EdgeInsets.only(left: 24, right: 24, top: 20),
-                width: double.infinity,
-                height: 58,
-                child: ElevatedButton(
-                  onPressed: () {
-                    loginUser();
-                  },
-                  style: ElevatedButton.styleFrom(
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(35),
-                      ),
-                      backgroundColor: Colors.black),
-                  child: Text(
-                    'Sign in',
-                    style: TextStyle(color: Colors.white, fontSize: 20),
-                  ),
-                ),
-              ),
               SizedBox(height: 20),
               Padding(
                 padding: const EdgeInsets.only(right: 20),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
-                    Text("Don't have an account yet?"),
+                    Text("Already have account?"),
                     TextButton(
                       onPressed: () {
                         Navigator.push(
                           context,
-                          MaterialPageRoute(
-                              builder: (context) => RegisterPage()),
+                          MaterialPageRoute(builder: (context) => LoginPage()),
                         );
                       },
                       child: Text(
-                        'Register',
+                        'Login',
                         style: TextStyle(color: Colors.blueAccent),
                       ),
                     ),
                   ],
                 ),
               ),
-              SizedBox(height: 10),
-              Text('Or Login With Google', style: TextStyle(fontSize: 18)),
               Container(
-                width: 100,
-                height: 100,
-                margin: EdgeInsets.only(top: 20),
+                margin: EdgeInsets.only(left: 24, right: 24, top: 20),
+                width: double.infinity,
+                height: 58,
                 child: ElevatedButton(
-                    onPressed: () {},
-                    style: ElevatedButton.styleFrom(
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(20)),
-                      backgroundColor: Color(0xffD9D9D9),
+                  onPressed: registerUser,
+                  style: ElevatedButton.styleFrom(
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(35),
                     ),
-                    child: SvgPicture.asset(
-                      'assets/images/google.svg',
-                      width: 50,
-                      height: 50,
-                    )),
+                    backgroundColor: Colors.white,
+                  ),
+                  child: Text(
+                    'Create Account',
+                    style: TextStyle(color: Colors.black, fontSize: 20),
+                  ),
+                ),
               ),
             ],
           ),
