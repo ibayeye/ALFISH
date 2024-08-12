@@ -4,6 +4,7 @@ import 'package:alfish/mainpage.dart';
 import 'package:alfish/register.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:http/http.dart' as http;
 import 'config.dart';
 
@@ -24,6 +25,9 @@ class _LoginPageState extends State<LoginPage> {
 
   String? _errorMessage;
 
+  // Tambahkan instance GoogleSignIn
+  final GoogleSignIn _googleSignIn = GoogleSignIn();
+
   void loginUser() async {
     setState(() {
       // Validasi input sebelum mengirim permintaan
@@ -32,7 +36,6 @@ class _LoginPageState extends State<LoginPage> {
     });
 
     if (_isEmailValid && _isPasswordValid) {
-      // Lakukan registrasi
       var reqBody = {
         'email': emailController.text,
         'password': passwordController.text,
@@ -48,7 +51,6 @@ class _LoginPageState extends State<LoginPage> {
         if (response.statusCode == 200) {
           var responseData = jsonDecode(response.body);
           if (responseData['status']) {
-            // Jika berhasil, tampilkan dialog sukses dan arahkan ke halaman login
             showDialog(
               context: context,
               builder: (context) => AlertDialog(
@@ -80,6 +82,30 @@ class _LoginPageState extends State<LoginPage> {
           _errorMessage = 'Terjadi kesalahan';
         });
       }
+    }
+  }
+
+  // Fungsi untuk Sign-In dengan Google
+  Future<void> signInWithGoogle() async {
+    try {
+      final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
+      if (googleUser == null) {
+        // User cancelled the login
+        return;
+      }
+
+      final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
+
+      // Anda bisa menggunakan googleAuth.accessToken dan googleAuth.idToken
+      // untuk mengautentikasi pengguna ke backend Anda.
+
+      Navigator.of(context).pushReplacement(
+        MaterialPageRoute(builder: (context) => MainPage()),
+      );
+    } catch (error) {
+      setState(() {
+        _errorMessage = 'Login dengan Google gagal: $error';
+      });
     }
   }
 
@@ -226,7 +252,9 @@ class _LoginPageState extends State<LoginPage> {
                 height: 100,
                 margin: EdgeInsets.only(top: 20),
                 child: ElevatedButton(
-                    onPressed: () {},
+                    onPressed: () {
+                      signInWithGoogle();
+                    },
                     style: ElevatedButton.styleFrom(
                       shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(20)),
